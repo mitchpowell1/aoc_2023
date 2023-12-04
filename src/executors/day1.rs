@@ -54,6 +54,6 @@ fn get_digit(c: char, line: &str) -> Option<u32> {
         DIGITS
             .iter()
             .position(|&w| line.starts_with(w))
-            .and_then(|i| Some(i as u32 + 1))
+            .map(|i| i as u32 + 1)
     })
 }
