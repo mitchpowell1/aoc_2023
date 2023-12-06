@@ -1,6 +1,7 @@
 pub mod execution_driver;
 pub mod executors;
 pub mod setup_day;
+pub mod utils;
 
 use clap::{Parser, Subcommand};
 use setup_day::setup_day;
