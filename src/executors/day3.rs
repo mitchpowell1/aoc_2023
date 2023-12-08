@@ -1,4 +1,5 @@
 use super::Executor;
+use std::fmt::Write;
 
 use rustc_hash::FxHashMap;
 
@@ -70,14 +71,15 @@ impl Executor for Day3 {
         self.lines = lines;
     }
 
-    fn part_one(&mut self) {
-        println!(
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
+        _ = write!(
+            output_buffer,
             "P1: {}",
             self.part_costs.values().flat_map(|v| v.iter()).sum::<u32>()
         );
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let gear_ratio_sum = self
             .part_costs
             .iter()
@@ -85,6 +87,6 @@ impl Executor for Day3 {
             .map(|(_, c)| c[0] * c[1])
             .sum::<u32>();
 
-        println!("P2: {}", gear_ratio_sum);
+        _ = write!(output_buffer, "P2: {}", gear_ratio_sum);
     }
 }

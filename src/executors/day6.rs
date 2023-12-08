@@ -9,6 +9,8 @@ use nom::{
 
 use super::Executor;
 
+use std::fmt::Write;
+
 #[derive(Default, Debug)]
 pub struct Day6 {
     times: [Option<u64>; 4],
@@ -76,7 +78,7 @@ impl Executor for Day6 {
         let _ = parse_vals(input, "Distance:", &mut self.distances).unwrap();
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let total = self
             .times
             .iter()
@@ -86,10 +88,10 @@ impl Executor for Day6 {
                 acc * get_num_winning_charge_times(*time, *distance)
             });
 
-        println!("P1: {total}");
+        _ = write!(output_buffer, "P1: {total}");
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let time = self
             .times
             .iter()
@@ -102,6 +104,6 @@ impl Executor for Day6 {
             .flatten()
             .fold(0, |acc, val| acc * 10u64.pow(val.ilog10() + 1) + val);
         let num_record_breaking_runs = get_num_winning_charge_times(time, distance);
-        println!("P2: {num_record_breaking_runs}");
+        _ = write!(output_buffer, "P2: {num_record_breaking_runs}");
     }
 }

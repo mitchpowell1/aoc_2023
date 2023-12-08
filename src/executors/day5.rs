@@ -12,6 +12,7 @@ use nom::sequence::terminated;
 use nom::sequence::tuple;
 use nom::IResult;
 
+use std::fmt::Write;
 use std::ops::Range;
 
 #[derive(Debug)]
@@ -95,7 +96,7 @@ impl Executor for Day5 {
         self.map_cascade = map_cascade;
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let mut min_location = u64::MAX;
         for seed in &self.seeds {
             let mut v = *seed;
@@ -111,10 +112,10 @@ impl Executor for Day5 {
             min_location = std::cmp::min(min_location, v);
         }
 
-        println!("P1: {min_location}");
+        _ = write!(output_buffer, "P1: {min_location}");
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let mut inputs: Vec<_> = self
             .seeds
             .chunks_exact(2)
@@ -144,6 +145,6 @@ impl Executor for Day5 {
         let min_location = outputs
             .iter()
             .fold(u64::MAX, |acc, rng| std::cmp::min(acc, rng.start));
-        println!("P2: {min_location}");
+        _ = write!(output_buffer, "P2: {min_location}");
     }
 }

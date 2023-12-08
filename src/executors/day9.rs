@@ -1,5 +1,7 @@
 use super::Executor;
 
+use std::fmt::Write;
+
 #[derive(Default, Debug)]
 pub struct Day9 {
     histories: Vec<Vec<i32>>,
@@ -43,7 +45,7 @@ impl Executor for Day9 {
         });
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let aggregator = |acc, (_, last)| acc + last;
         let v: i32 = self
             .histories
@@ -59,10 +61,10 @@ impl Executor for Day9 {
             })
             .sum();
 
-        println!("P1: {v}");
+        _ = write!(output_buffer, "P1: {v}");
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let aggregator = |acc, (first, _)| first - acc;
         let v: i32 = self
             .histories
@@ -78,6 +80,6 @@ impl Executor for Day9 {
             })
             .sum();
 
-        println!("P2: {v}");
+        _ = write!(output_buffer, "P2: {v}");
     }
 }

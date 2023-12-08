@@ -1,6 +1,7 @@
 use rustc_hash::FxHashMap;
 
 use super::Executor;
+use std::fmt::Write;
 
 use nom::{
     bytes::complete::tag,
@@ -88,7 +89,7 @@ impl Executor for Day8 {
         self.end = end;
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let Day8 {
             directions,
             map,
@@ -108,10 +109,10 @@ impl Executor for Day8 {
             num_steps += 1;
             direction_index = (direction_index + 1) % directions.len();
         }
-        println!("P1: {num_steps}");
+        _ = write!(output_buffer, "P1: {num_steps}");
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let Day8 {
             directions,
             map,
@@ -141,6 +142,6 @@ impl Executor for Day8 {
                 }
             })
             .product();
-        println!("P2: {min_path_length}");
+        _ = write!(output_buffer, "P2: {min_path_length}");
     }
 }

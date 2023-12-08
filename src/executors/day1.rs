@@ -1,4 +1,5 @@
 use super::Executor;
+use std::fmt::Write;
 
 const DIGITS: [&str; 9] = [
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
@@ -13,7 +14,7 @@ impl Executor for Day1 {
         self.input = input
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let mut total = 0;
         for line in self.input.lines() {
             let mut last_digit = None;
@@ -28,10 +29,10 @@ impl Executor for Day1 {
             total += last_digit.unwrap()
         }
 
-        println!("P1: {total}");
+        _ = write!(output_buffer, "P1: {total}");
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let mut total = 0;
         for line in self.input.lines() {
             let mut last_digit = None;
@@ -45,7 +46,7 @@ impl Executor for Day1 {
             }
             total += last_digit.unwrap()
         }
-        println!("P2: {total}");
+        _ = write!(output_buffer, "P2: {total}");
     }
 }
 

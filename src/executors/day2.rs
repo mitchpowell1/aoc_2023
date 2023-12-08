@@ -1,4 +1,5 @@
 use super::Executor;
+use std::fmt::Write;
 
 use nom::{
     branch::alt,
@@ -13,6 +14,7 @@ use nom::{
 #[derive(Default)]
 pub struct Day2 {
     games: Vec<Game>,
+    p2_sum: i32,
 }
 
 #[derive(Debug)]
@@ -68,7 +70,7 @@ impl Executor for Day2 {
             .collect();
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let mut p1_sum = 0;
         let mut p2_sum = 0;
         for game in &self.games {
@@ -86,9 +88,11 @@ impl Executor for Day2 {
             }
             p2_sum += max_red * max_blue * max_green
         }
-        println!("P1: {p1_sum}");
-        println!("P2: {p2_sum}");
+        self.p2_sum = p2_sum;
+        _ = write!(output_buffer, "P1: {p1_sum}");
     }
 
-    fn part_two(&mut self) {}
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
+        _ = write!(output_buffer, "P2: {}", self.p2_sum);
+    }
 }

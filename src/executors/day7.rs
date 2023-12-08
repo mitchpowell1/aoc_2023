@@ -3,6 +3,7 @@ use super::Executor;
 use std::cmp::PartialOrd;
 use std::mem::MaybeUninit;
 
+use std::fmt::Write;
 #[derive(Debug, PartialEq, PartialOrd, Copy, Clone, Eq, Ord)]
 enum Card {
     Joker,
@@ -135,18 +136,18 @@ impl Executor for Day7 {
         }
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         self.hands.sort_unstable();
 
-        println!("P1: {}", self.compute_total_winnings());
+        _ = write!(output_buffer, "P1: {}", self.compute_total_winnings());
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         self.hands
             .iter_mut()
             .for_each(|(hand, _)| hand.with_jacks_as_jokers());
 
         self.hands.sort_unstable();
-        println!("P2: {}", self.compute_total_winnings());
+        _ = write!(output_buffer, "P2: {}", self.compute_total_winnings());
     }
 }

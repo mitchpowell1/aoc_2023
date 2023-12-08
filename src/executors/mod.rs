@@ -1,10 +1,10 @@
 #![cfg_attr(rustfmt, rustfmt_skip)]
-
+use std::fmt::Write;
 
 pub trait Executor {
     fn parse(&mut self, input: String);
-    fn part_one(&mut self);
-    fn part_two(&mut self);
+    fn part_one(&mut self, output_buffer: &mut dyn Write);
+    fn part_two(&mut self, output_buffer: &mut dyn Write);
 }
 
 pub mod day1;

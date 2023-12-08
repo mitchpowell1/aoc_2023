@@ -1,4 +1,5 @@
 use super::Executor;
+use std::fmt::Write;
 
 use nom::{
     bytes::complete::tag,
@@ -63,7 +64,7 @@ impl Executor for Day4 {
         self.cards = input.lines().map(|l| Card::parse(l).unwrap().1).collect();
     }
 
-    fn part_one(&mut self) {
+    fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let total: usize = self
             .cards
             .iter()
@@ -73,10 +74,10 @@ impl Executor for Day4 {
             })
             .sum();
 
-        println!("P1: {total}");
+        _ = write!(output_buffer, "P1: {total}");
     }
 
-    fn part_two(&mut self) {
+    fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let mut total = 0;
         for i in 0..self.cards.len() {
             let Card {
@@ -91,6 +92,6 @@ impl Executor for Day4 {
             }
         }
 
-        println!("P2: {total}");
+        _ = write!(output_buffer, "P2: {total}");
     }
 }
