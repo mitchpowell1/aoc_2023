@@ -1,6 +1,4 @@
-use rayon::prelude::*;
-
-use rustc_hash::{FxHashMap, FxHashSet};
+use rustc_hash::FxHashMap;
 
 use super::Executor;
 
@@ -53,17 +51,14 @@ fn parse_node(input: &str) -> IResult<&str, (&str, &str, &str)> {
 impl Executor for Day8 {
     fn parse(&mut self, input: String) {
         let mut sections = input.split("\n\n");
-        let directions: Vec<Direction> = sections
+        sections
             .next()
             .unwrap()
             .chars()
-            .map(Direction::from_char)
-            .collect();
+            .for_each(|c| self.directions.push(Direction::from_char(c)));
 
         let nodes = sections.next().unwrap();
         let mut node_vec = vec![];
-        let mut a_nodes = vec![];
-        let mut z_nodes = vec![];
         let mut node_indexes = FxHashMap::default();
         let mut start = 0;
         let mut end = 0;
@@ -76,24 +71,21 @@ impl Executor for Day8 {
             }
 
             match node.as_bytes().last() {
-                Some(b'A') => a_nodes.push(i),
-                Some(b'Z') => z_nodes.push(i),
+                Some(b'A') => self.a_nodes.push(i),
+                Some(b'Z') => self.z_nodes.push(i),
                 _ => {}
             }
 
             node_indexes.insert(node, i);
             node_vec.push((left, right));
         }
-        let map: Vec<_> = node_vec
-            .iter()
-            .map(|(l, r)| (*node_indexes.get(l).unwrap(), *node_indexes.get(r).unwrap()))
-            .collect();
-        self.map = map;
-        self.directions = directions;
+        node_vec.iter().for_each(|(l, r)| {
+            self.map
+                .push((*node_indexes.get(l).unwrap(), *node_indexes.get(r).unwrap()))
+        });
+
         self.start = start;
         self.end = end;
-        self.a_nodes = a_nodes;
-        self.z_nodes = z_nodes;
     }
 
     fn part_one(&mut self) {
@@ -127,35 +119,28 @@ impl Executor for Day8 {
             z_nodes,
             ..
         } = self;
-        let min_path_length = a_nodes
-            .par_iter()
-            .fold(
-                || 1,
-                |mut min_path_length, node| {
-                    let mut visited = FxHashSet::default();
-                    let mut current_node = *node;
-                    let mut path_length = 0u64;
-                    let mut direction_index = 1;
-                    while !visited.contains(&(current_node, direction_index)) {
-                        path_length += 1;
-                        visited.insert((current_node, direction_index));
+        let min_path_length: u64 = a_nodes
+            .iter()
+            .map(|node| {
+                let mut current_node = *node;
+                let mut path_length = 0u64;
+                let mut direction_index = 1;
+                loop {
+                    path_length += 1;
 
-                        current_node = match directions[direction_index] {
-                            Direction::Left => map[current_node].0,
-                            Direction::Right => map[current_node].1,
-                        };
+                    current_node = match directions[direction_index] {
+                        Direction::Left => map[current_node].0,
+                        Direction::Right => map[current_node].1,
+                    };
 
-                        direction_index = (direction_index + 1) % directions.len();
-
-                        if z_nodes.contains(&current_node) {
-                            min_path_length = num::integer::lcm(min_path_length, path_length);
-                        }
+                    if z_nodes.contains(&current_node) {
+                        return path_length;
                     }
 
-                    min_path_length
-                },
-            )
-            .reduce(|| 1, num::integer::lcm);
+                    direction_index = (direction_index + 1) % directions.len();
+                }
+            })
+            .product();
         println!("P2: {min_path_length}");
     }
 }

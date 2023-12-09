@@ -91,7 +91,7 @@ impl Hand {
             .iter_mut()
             .filter(|c| matches!(c, Card::Jack))
             .for_each(|c| *c = Card::Joker);
-        *hand_type = HandType::from_cards(&cards)
+        *hand_type = HandType::from_cards(cards)
     }
 }
 
