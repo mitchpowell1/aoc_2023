@@ -48,14 +48,11 @@ impl Day11 {
 
 impl Executor for Day11 {
     fn parse(&mut self, input: String) {
-        let mut populated_columns = false;
+        for _ in input.lines().next().unwrap().as_bytes() {
+            self.populated_column_counts.push(0);
+        }
+
         for (i, line) in input.lines().enumerate() {
-            if !populated_columns {
-                for _ in 0..line.as_bytes().len() {
-                    self.populated_column_counts.push(0);
-                }
-                populated_columns = true;
-            }
             let mut row_populated = 0;
             for (j, c) in line.chars().enumerate() {
                 if c == '#' {
