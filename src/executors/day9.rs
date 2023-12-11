@@ -68,11 +68,10 @@ impl Executor for Day9 {
         let aggregator = |acc, (first, _)| first - acc;
         let v: i32 = self
             .histories
-            .iter()
+            .iter_mut()
             .map(|h| {
-                h.clone_into(&mut self.value_buffer1);
                 produce_sequence_value(
-                    &mut self.value_buffer1,
+                    h,
                     &mut self.value_buffer2,
                     &mut self.first_last_value_buffer,
                     aggregator,
