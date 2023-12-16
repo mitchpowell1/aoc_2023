@@ -55,7 +55,7 @@ impl Executor for Day13 {
             .split("\n\n")
             .map(|s| {
                 s.lines()
-                    .map(|l| l.as_bytes().iter().map(|&b| b).collect())
+                    .map(|l| l.as_bytes().to_vec())
                     .collect()
             })
             .collect()

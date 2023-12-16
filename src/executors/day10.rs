@@ -45,15 +45,15 @@ impl TileType {
     fn connects(&self, direction: Direction) -> bool {
         use Direction::*;
         use TileType::*;
-        match (self, direction) {
-            (Vertical, North | South) => true,
-            (NorthWestBend, North | West) => true,
-            (NorthEastBend, North | East) => true,
-            (SouthWestBend, South | West) => true,
-            (SouthEastBend, South | East) => true,
-            (Horizontal, East | West) => true,
-            _ => false,
-        }
+        matches!(
+            (self, direction),
+            (Vertical, North | South)
+                | (NorthWestBend, North | West)
+                | (NorthEastBend, North | East)
+                | (SouthWestBend, South | West)
+                | (SouthEastBend, South | East)
+                | (Horizontal, East | West)
+        )
     }
 }
 

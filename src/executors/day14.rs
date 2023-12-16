@@ -89,7 +89,7 @@ impl Platform {
         };
 
         while self.in_bounds(starting_location) {
-            let mut fall_location = starting_location.clone();
+            let mut fall_location = starting_location;
             while self.in_bounds(fall_location) {
                 let (i, j) = &mut fall_location;
                 if self.rocks[*i as usize][*j as usize] == Tile::Empty {
@@ -98,7 +98,7 @@ impl Platform {
                 fall_location.0 += search_offset.0;
                 fall_location.1 += search_offset.1;
             }
-            let mut search_location = fall_location.clone();
+            let mut search_location = fall_location;
             let mut encountered_cube = false;
             while self.in_bounds(search_location) {
                 let (i, j) = search_location;
@@ -118,7 +118,7 @@ impl Platform {
                     Tile::Empty => {
                         if encountered_cube {
                             encountered_cube = false;
-                            fall_location = search_location.clone();
+                            fall_location = search_location;
                         }
                     }
                     Tile::Cube => {

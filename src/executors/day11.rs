@@ -28,7 +28,7 @@ impl Day11 {
     }
 
     fn get_distance(&self, (r1, c1): (u8, u8), (r2, c2): (u8, u8)) -> (usize, usize) {
-        let base_distance = (r2 - r1) as usize + (c1 as isize - c2 as isize).abs() as usize;
+        let base_distance = (r2 - r1) as usize + (c1 as isize - c2 as isize).unsigned_abs();
         let (min_c, max_c) = (std::cmp::min(c1, c2), std::cmp::max(c1, c2));
         let num_empty_rows = self.get_empty_rows_between(r1, r2) as usize;
         let num_empty_cols = self.get_empty_cols_between(min_c, max_c) as usize;

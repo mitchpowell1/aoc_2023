@@ -137,7 +137,7 @@ impl Executor for Day16 {
 
     fn part_two(&mut self, output_buffer: &mut dyn Write) {
         let max_out = (0..self.grid.len())
-            .map(|i| {
+            .flat_map(|i| {
                 [
                     (Point(i as isize, 0), Direction::East),
                     (
@@ -146,20 +146,15 @@ impl Executor for Day16 {
                     ),
                 ]
             })
-            .flatten()
-            .chain(
-                (0..self.grid[0].len())
-                    .map(|i| {
-                        [
-                            (Point(0, i as isize), Direction::South),
-                            (
-                                Point(self.grid.len() as isize - 1, i as isize),
-                                Direction::North,
-                            ),
-                        ]
-                    })
-                    .flatten(),
-            )
+            .chain((0..self.grid[0].len()).flat_map(|i| {
+                [
+                    (Point(0, i as isize), Direction::South),
+                    (
+                        Point(self.grid.len() as isize - 1, i as isize),
+                        Direction::North,
+                    ),
+                ]
+            }))
             .par_bridge()
             .map_init(
                 || (VecDeque::new(), FxHashSet::default()),
