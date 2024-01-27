@@ -62,3 +62,10 @@ pub fn get_executors() -> Vec<Box<dyn Executor>> {
         Box::<day25::Day25>::default(),
     ]
 }
+
+fn foo(
+    bar: usize,
+    baz: usize,
+    whatever:usize,
+    other: usize
+    ) {}

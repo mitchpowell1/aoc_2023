@@ -3,7 +3,6 @@ use super::Executor;
 use std::{collections::VecDeque, fmt::Write};
 
 use rayon::prelude::*;
-use rustc_hash::FxHashSet;
 
 #[derive(Debug, Clone, Copy)]
 enum Tile {
@@ -55,6 +54,15 @@ impl Direction {
         }
     }
 
+    fn get_visited_bitmask(&self) -> u8 {
+        match self {
+            Direction::North => 0b00000001,
+            Direction::South => 0b00000010,
+            Direction::East => 0b00000100,
+            Direction::West => 0b00001000,
+        }
+    }
+
     fn get_new_directions(&self, tile: Tile) -> [Option<Direction>; 2] {
         use Direction::*;
         use Tile::*;
@@ -91,37 +99,52 @@ impl Day16 {
         starting_point: Point,
         starting_dir: Direction,
         to_visit: &mut VecDeque<(Direction, Point)>,
-        visited: &mut FxHashSet<(Direction, Point)>,
     ) -> u32 {
         to_visit.clear();
-        visited.clear();
-        let mut energized_squares = [0u128; 128];
-        visited.insert((starting_dir, starting_point));
+
+        let mut visited = [[0u8; 128]; 128];
+        visited[starting_point.0 as usize][starting_point.1 as usize] |=
+            starting_dir.get_visited_bitmask();
         to_visit.push_back((starting_dir, starting_point));
 
         while let Some((direction, point)) = to_visit.pop_front() {
             let i = point.0 as usize;
             let j = point.1 as usize;
-            energized_squares[i] |= 1 << j;
-            let next_directions = direction.get_new_directions(self.grid[i][j]);
-            for direction in next_directions.iter().flatten() {
-                let next_point = point + direction.get_offset();
+            for next_direction in direction
+                .get_new_directions(self.grid[i][j])
+                .iter()
+                .flatten()
+            {
+                let next_point = point + next_direction.get_offset();
                 if !self.in_bounds(next_point) {
                     continue;
                 }
-                if visited.contains(&(*direction, next_point)) {
+                let next_i = next_point.0 as usize;
+                let next_j = next_point.1 as usize;
+                if (visited[next_i][next_j] & next_direction.get_visited_bitmask()) != 0 {
                     continue;
                 }
-                to_visit.push_back((*direction, next_point));
-                visited.insert((*direction, next_point));
+                to_visit.push_back((*next_direction, next_point));
+                visited[next_i][next_j] |= next_direction.get_visited_bitmask();
             }
         }
-        energized_squares.iter().map(|i| i.count_ones()).sum()
+
+        visited.iter().flatten().filter(|&v| *v > 0).count() as u32
     }
 }
 
 impl Executor for Day16 {
     fn parse(&mut self, input: String) {
+        let _input = r".|...\....
+|.-.\.....
+.....|-...
+........|.
+..........
+.........\
+..../.\\..
+.-.-/..|..
+.|....-|.\
+..//.|....";
         for line in input.lines() {
             self.grid.push(line.chars().map(Tile::from).collect());
         }
@@ -129,8 +152,7 @@ impl Executor for Day16 {
 
     fn part_one(&mut self, output_buffer: &mut dyn Write) {
         let mut to_visit = VecDeque::default();
-        let mut visited = FxHashSet::default();
-        let out = self.get_num_energized(Point(0, 0), Direction::East, &mut to_visit, &mut visited);
+        let out = self.get_num_energized(Point(0, 0), Direction::East, &mut to_visit);
 
         _ = write!(output_buffer, "P1: {}", out)
     }
@@ -157,10 +179,8 @@ impl Executor for Day16 {
             }))
             .par_bridge()
             .map_init(
-                || (VecDeque::new(), FxHashSet::default()),
-                |(to_visit, visited), (point, dir)| {
-                    self.get_num_energized(point, dir, to_visit, visited)
-                },
+                VecDeque::new,
+                |to_visit, (point, dir)| self.get_num_energized(point, dir, to_visit),
             )
             .max()
             .unwrap();

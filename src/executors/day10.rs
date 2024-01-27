@@ -3,31 +3,14 @@ use super::Executor;
 use std::collections::VecDeque;
 use std::fmt::Write;
 
+use crate::utils::direction::Direction;
+
 const DIRECTIONS: [Direction; 4] = [
     Direction::North,
     Direction::East,
     Direction::South,
     Direction::West,
 ];
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-enum Direction {
-    North,
-    South,
-    East,
-    West,
-}
-
-impl Direction {
-    fn get_offset(&self) -> (i32, i32) {
-        match self {
-            Direction::North => (-1, 0),
-            Direction::South => (1, 0),
-            Direction::East => (0, 1),
-            Direction::West => (0, -1),
-        }
-    }
-}
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 enum TileType {
@@ -167,8 +150,8 @@ impl Executor for Day10 {
             for direction in DIRECTIONS {
                 if self.tiles[i][j].0.connects(direction) {
                     let (i_offset, j_offset) = direction.get_offset();
-                    let next_i = (i as i32 + i_offset) as usize;
-                    let next_j = (j as i32 + j_offset) as usize;
+                    let next_i = (i as isize + i_offset as isize) as usize;
+                    let next_j = (j as isize + j_offset as isize) as usize;
                     if !self.tiles[next_i][next_j].1 {
                         self.tiles[next_i][next_j].1 = true;
                         to_visit.push_back((next_i, next_j, depth + 1));
